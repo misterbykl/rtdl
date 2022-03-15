@@ -3,7 +3,6 @@ package com.rtdl.sf.piidetection.undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
-import io.undertow.util.SameThreadExecutor;
 import org.apache.flink.statefun.sdk.java.handler.RequestReplyHandler;
 import org.apache.flink.statefun.sdk.java.slice.Slice;
 import org.apache.flink.statefun.sdk.java.slice.Slices;
