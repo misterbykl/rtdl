@@ -22,54 +22,54 @@ writes to the Kafka topic that `stateful-functions` is listening to (**PiiDetect
 3. Add **module.yaml** including ingress, egress configuration as below
 
 
-    kind: io.statefun.endpoints.v2/http
-    spec:
-        functions: com.rtdl.sf.pii/*
-        urlPathTemplate: http://pii-detection:5000/
-        transport:
-            type: io.statefun.transports.v1/async
-    ---
-    kind: io.statefun.kafka.v1/ingress
-    spec:
-        id: com.rtdl.sf.pii/ingress
-        address: redpanda:29092
-        consumerGroupId: pii-group
-        startupPosition:
-            type: latest
-
-        topics:
-          - topic: ingress
-            valueType: com.rtdl.sf.pii/IncomingMessage
-            targets:
-              - com.rtdl.sf.pii/pii-detection
-    ---
-    kind: io.statefun.kafka.v1/egress
-    spec:
-        id: com.rtdl.sf.pii/egress
-        address: redpanda:29092
-        deliverySemantic:
-        type: exactly-once
-        transactionTimeout: 5sec
+       kind: io.statefun.endpoints.v2/http
+       spec:
+           functions: com.rtdl.sf.pii/*
+           urlPathTemplate: http://pii-detection:5000/
+           transport:
+               type: io.statefun.transports.v1/async
+       ---
+       kind: io.statefun.kafka.v1/ingress
+       spec:
+           id: com.rtdl.sf.pii/ingress
+           address: redpanda:29092
+           consumerGroupId: pii-group
+           startupPosition:
+               type: latest
+       
+           topics:
+             - topic: ingress
+               valueType: com.rtdl.sf.pii/IncomingMessage
+               targets:
+                 - com.rtdl.sf.pii/pii-detection
+       ---
+       kind: io.statefun.kafka.v1/egress
+       spec:
+           id: com.rtdl.sf.pii/egress
+           address: redpanda:29092
+           deliverySemantic:
+           type: exactly-once
+           transactionTimeout: 5sec
 
 4. Modify **docker-compose.yml** as below
 
 
-    statefun-worker:
-    ......
-    volumes:
-    ......
-    - ./pii-detection/module.yaml:/opt/statefun/modules/pii-detection/module.yaml
+       statefun-worker:
+       ......
+       volumes:
+       ......
+       - ./pii-detection/module.yaml:/opt/statefun/modules/pii-detection/module.yaml
+       
+       
+       statefun-manager:
+       ......
+       volumes:
+       ......
+       - ./pii-detection/module.yaml:/opt/statefun/modules/pii-detection/module.yaml
 
 
-    statefun-manager:
-    ......
-    volumes:
-    ......
-    - ./pii-detection/module.yaml:/opt/statefun/modules/pii-detection/module.yaml
-
-
-    pii-detection:
-        build:
-            context: ./pii-detection
-        expose:
-          - 5000
+       pii-detection:
+           build:
+               context: ./pii-detection
+           expose:
+             - 5000
